@@ -61,6 +61,11 @@ var (
 		"How many members are in the cluster.",
 		nil, nil,
 	)
+	memberStatus = prometheus.NewDesc(
+		prometheus.BuildFQName(namespace, "", "members_status"),
+		"Member status in the cluster.",
+		[]string{"dc", "node"}, nil,
+	)
 	serviceCount = prometheus.NewDesc(
 		prometheus.BuildFQName(namespace, "", "catalog_services"),
 		"How many services are in the cluster.",
@@ -218,6 +223,17 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 		ch <- prometheus.MustNewConstMetric(
 			nodeCount, prometheus.GaugeValue, float64(len(nodes)),
 		)
+	}
+	// Query for member status.
+	members, err := e.client.Agent().Members(false)
+	if err != nil {
+		// FIXME: How should we handle a partial failure like this?
+	} else {
+		for _, entry :=range members {
+			ch <- prometheus.MustNewConstMetric(
+				memberStatus, prometheus.GaugeValue, float64(entry.Status), entry.Tags["dc"], entry.Name,
+			)
+		}
 	}
 
 	// Query for the full list of services.

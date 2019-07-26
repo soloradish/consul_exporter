@@ -21,6 +21,7 @@ make
 | consul_raft_peers | How many peers (servers) are in the Raft cluster | |
 | consul_serf_lan_members | How many members are in the cluster | |
 | consul_catalog_services | How many services are in the cluster | |
+| consul_members_status | Status of agent members in the cluster | dc, node |
 | consul_catalog_service_node_healthy | Is this service healthy on this node | service, node |
 | consul_health_node_status | Status of health checks associated with a node | check, node, status |
 | consul_health_service_status | Status of health checks associated with a service | check, node, service, status |
